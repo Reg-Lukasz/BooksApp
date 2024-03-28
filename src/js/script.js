@@ -6,6 +6,7 @@ const select = {
   },
   containerOf: {
     bookList: '.books-list',
+    bookListImages: '.book__image',
   }
 }
 
@@ -37,3 +38,20 @@ function render(){
   }
 }
 render();
+
+const favouriteBooks = [];
+
+function initActions(){
+  const bookList = document.querySelectorAll(select.containerOf.bookListImages);
+
+  for(let book of bookList){
+    book.addEventListener('dblclick', function(event){
+      event.preventDefault();
+      book.classList.add("favorite");
+      const bookId = book.getAttribute("data-id");
+      favouriteBooks.push(bookId);
+    })
+  }
+}
+
+initActions();
