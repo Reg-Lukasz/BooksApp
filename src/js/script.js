@@ -7,12 +7,16 @@ const select = {
   containerOf: {
     bookList: '.books-list',
     bookListImages: '.book__image',
+    filters: '.filters',
   }
 }
 
 const templates = {
   bookTemplate: Handlebars.compile(document.querySelector(select.templateOf.bookTemplate).innerHTML),
 }
+
+const favoriteBooks = [];
+const filters = [];
 
 function render(){
   for(let bookId in dataSource.books){
@@ -39,8 +43,6 @@ function render(){
 }
 render();
 
-const favoriteBooks = [];
-
 function initActions(){
   const bookContainer = document.querySelector(select.containerOf.bookList);
 
@@ -61,6 +63,42 @@ function initActions(){
       }
     }
   })
-}
 
+  const filterContainer = document.querySelector(select.containerOf.filters);
+
+  filterContainer.addEventListener('click', function(event){
+    const target = event.target;
+    if(target.nodeName == 'INPUT' && target.type == 'checkbox' && target.name == 'filter'){
+      if(!target.checked){
+        const indexOfValue = filters.indexOf(target.value);
+        filters.splice(indexOfValue, 1);
+      } else {
+        filters.push(target.value);
+      }
+    }
+
+    filterBooks();
+  })
+}
 initActions();
+
+function filterBooks(){
+
+  for(const book of dataSource.books){
+    let shouldBeHidden = false; 
+    const filterBook = document.querySelector(select.containerOf.bookListImages + '[data-id = "' + book.id + '"]');
+
+    for(const filter of filters){
+      if(!book.details[filter]){
+        shouldBeHidden = true;
+        break;
+      }
+    }
+  
+    if(shouldBeHidden){
+      filterBook.classList.add("hidden");
+    } else {
+      filterBook.classList.remove("hidden");
+    }
+  }
+}
